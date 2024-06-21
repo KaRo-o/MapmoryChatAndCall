@@ -3,20 +3,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import "../css/Chat.css";
-import Footer from "../common/Footer";
+import Footer from "../common/footer";
 
-const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
-// const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
+// const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
+const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
 
 //push 할때는 domain으로 변경할것
-// const domain = "https://mapmory.co.kr";
-const domain = "http://192.168.0.45:3001";
-// const domain2 = "https://mapmory.co.kr";
-const domain2 = "http://192.168.0.45:8000";
+const domain = "https://mapmory.co.kr";
+// const domain = "http://192.168.0.45:3001";
+const domain2 = "https://mapmory.co.kr";
+// const domain2 = "http://192.168.0.45:8000";
 
 const Chat = () => {
   const fileInputRef = useRef();
-  const { chat_room_id } = useParams();
+  const { chat_room_id, nickname, profileImageName } = useParams();
   const [userId, setUserId] = useState();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -26,10 +26,11 @@ const Chat = () => {
   const [opponentNickName, setOpponentNickName] = useState("");
   const [opponent, setOpponent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState({});
   const location = useLocation();
 
   console.log(opponentProfiles);
+  console.log(imageUrl);
 
   useEffect(() => {
     console.log("asd", localStorage.getItem("opponentProfile"));
@@ -48,8 +49,8 @@ const Chat = () => {
   const axiosGetUser = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.0.45:8000/chat/json/getUser",
-        // `https://mapmory.co.kr/chat/json/getUser`,
+        // "http://192.168.0.45:8000/chat/json/getUser",
+        `${domain2}/chat/json/getUser`,
         {
           withCredentials: true,
         }
@@ -74,9 +75,9 @@ const Chat = () => {
       socket.emit("joinChat", { room, user });
     });
     socket.on("chat message", (msg) => {
-      // const user = userId;
+      const user = userId;
       // console.log("chat mes", user);
-      // socket.emit("is read", { room, user });
+      socket.emit("is read", { room, user });
       console.log("chat message");
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
@@ -184,8 +185,8 @@ const Chat = () => {
     try {
       await axios
         .post(
-          "http://192.168.0.45:8000/chat/json/addChatImage",
-          // "https://mapmory.co.kr/chat/json/addChatImage",
+          // "http://192.168.0.45:8000/chat/json/addChatImage",
+          `${domain2}/chat/json/addChatImage`,
           formData,
           config
         )
@@ -258,21 +259,30 @@ const Chat = () => {
   //   }
   // };
   return (
-    <>
-      <div className="content-for-footer">
-        <div className="chat">
-          <div className="contact bar">
-            <div className="pic">
-              <img
-                className="pic"
-                src={`${domain2}/user/rest/profile/${opponentProfiles}`}
-                alt="profile"
-              />
-            </div>
-            <div className="name">{opponentNickName}</div>
+    <div>
+      <div className="chat">
+        <div className="contact bar">
+          <div className="pic">
+            <img
+              className="pic"
+              src={`${domain2}/user/rest/profile/${profileImageName}`}
+              alt="profile"
+            />
           </div>
-          <div className="messages" id="chat">
-            {messages.map((res, index) => (
+          <div className="name">{nickname}</div>
+        </div>
+        <div className="messages" id="chat">
+          {messages.map((res, index) => {
+            const isSameSender =
+              index > 0 && messages[index - 1].senderId === res.senderId;
+            const nextMessage =
+              index < messages.length - 1 ? messages[index + 1] : null;
+            const isSameTimestamp =
+              nextMessage &&
+              parseTimeStamp(res.timestamp) ===
+                parseTimeStamp(nextMessage.timestamp);
+
+            return (
               <div key={index}>
                 {res.senderId === userId ? (
                   <div className="message-container">
@@ -286,7 +296,12 @@ const Chat = () => {
                         src={`${res.imageUrl}`}
                       ></img>
                     ) : null}
-                    {/* {parseTimeStamp(res.timestamp)} */}
+                    {/* 다음 메시지와 시간이 다르거나 채팅하는 사람이 다른 경우 시간을 표시 */}
+                    {(!isSameSender || !isSameTimestamp) && (
+                      <div className="timestamp">
+                        {parseTimeStamp(res.timestamp)}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="message-container">
@@ -300,42 +315,49 @@ const Chat = () => {
                         src={`${res.imageUrl}`}
                       ></img>
                     ) : null}
-                    {/* {parseTimeStamp(res.timestamp)} */}
+                    {/* 다음 메시지와 시간이 다르거나 채팅하는 사람이 다른 경우 시간을 표시 */}
+                    {(!isSameSender || !isSameTimestamp) && (
+                      <div className="timestamp">
+                        {parseTimeStamp(res.timestamp)}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-          <div className="input">
-            <i className="material-icons" onClick={inputImageClick}>
-              add_photo_alternate
-            </i>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              ref={fileInputRef}
-              onChange={onChangeImageInput}
-              style={{ display: "none" }}
-            />
-            <input
-              placeholder="여기에 메세지 입력"
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={pressEnter}
-            />
-            <button
-              onClick={onClickSend}
-              className="material-icons send-button"
-            >
-              send
-            </button>
-          </div>
+            );
+          })}
+        </div>
+        <div className="input">
+          {/* 이미지 미리보기 화면 만들곳 */}
+
+          {/* 이미지 미리보기 화면 만들곳 */}
+          <i className="material-icons" onClick={inputImageClick}>
+            add_photo_alternate
+          </i>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            ref={fileInputRef}
+            onChange={onChangeImageInput}
+            style={{ display: "none" }}
+          />
+          <input
+            placeholder="여기에 메세지 입력"
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={pressEnter}
+          />
+          <button onClick={onClickSend} className="material-icons send-button">
+            send
+          </button>
         </div>
       </div>
-      <Footer userId={userId} />
-    </>
+      <div className="footer-container chat-room">
+        <Footer userId={userId} />
+      </div>
+    </div>
   );
 };
 

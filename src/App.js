@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import VideoCall from "./pages/VideoCall";
 import Chat from "./pages/Chat";
 import ChatList from "./pages/ChatList";
-import Footer from "./common/Footer";
+import Footer from "./common/footer";
 
 const App = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -13,17 +13,22 @@ const App = () => {
   };
 
   return (
-    <div>
-      <Routes>
-        <Route
-          path="/video-call/:toUserId"
-          element={<VideoCall currentUserId={currentUserId} />}
-        />
-        <Route path="/video-call/chatList" element={<ChatList />} />
-        <Route path="/video-call/chatroom/:chat_room_id" element={<Chat />} />
-      </Routes>
+    <>
+      <div className="content=for-footer">
+        <Routes>
+          <Route
+            path="/video-call/:toUserId"
+            element={<VideoCall currentUserId={currentUserId} />}
+          />
+          <Route path="/video-call/chatList" element={<ChatList />} />
+          <Route
+            path="/video-call/chatroom/:chat_room_id/:nickname/:profileImageName"
+            element={<Chat />}
+          />
+        </Routes>
+      </div>
       {/* <Footer /> */}
-    </div>
+    </>
   );
 };
 
