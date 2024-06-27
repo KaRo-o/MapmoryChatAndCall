@@ -278,7 +278,7 @@ const Chat = () => {
   //   }
   // };
   return (
-    <div>
+    <div className="container">
       <div className="chat">
         <div className="contact bar">
           <div className="pic">

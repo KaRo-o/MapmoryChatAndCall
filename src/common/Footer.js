@@ -6,27 +6,28 @@ const Footer = () => {
   const [userId, setUserId] = useState();
 
   useEffect(() => {
-    axiosGetUser();
-    setUserId(sessionStorage.getItem(userId));
+    // axiosGetUser();
+    setUserId(sessionStorage.getItem("userId"));
+    console.log(sessionStorage.getItem("userId"));
   });
 
-  const axiosGetUser = async () => {
-    try {
-      const response = await axios.get(
-        // "http://192.168.0.45:8000/chat/rest/json/getUser",
-        // "https://www.uaena.shop/chat/rest/json/getUser",
-        `https://mapmory.co.kr/chat/json/getUser`,
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log("getUser", response.data);
-      setUserId(response.data);
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const axiosGetUser = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://192.168.0.45:8000/chat/rest/json/getUser",
+  //       // "https://www.uaena.shop/chat/rest/json/getUser",
+  //       // `https://mapmory.co.kr/chat/json/getUser`,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     // console.log("getUser", response.data);
+  //     setUserId(response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const locationUser = () => {
     window.location.href = `/user/getProfile?userId=${userId}`;

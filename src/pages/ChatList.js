@@ -25,7 +25,7 @@ const ChatList = () => {
   const [opponentProfiles, setOpponentProfiles] = useState({});
   const [opponentNickName, setOpponentNickName] = useState({});
 
-  sessionStorage.setItem("userId", userId);
+  // sessionStorage.setItem("userId", userId);
 
   useEffect(() => {
     axiosGetUser();
@@ -158,7 +158,7 @@ const ChatList = () => {
       <div>
         <div className="center content-for-footer">
           <div className="contact bar">
-            <h2>채팅 목록</h2>
+            <h3>Chatting</h3>
           </div>
 
           {list.map((chatList, index) => {
