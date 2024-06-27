@@ -13,6 +13,9 @@ import Footer from "../common/footer";
 const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
 const domain = "https://mapmory.co.kr";
 const domain2 = "https://mapmory.co.kr";
+// const socket = io("https://www.uaena.shop"); // 무중단 배포서버
+// const domain = "https://www.uaena.shop";
+// const domain2 = "https://www.uaena.shop";
 
 const ChatList = () => {
   const navigate = useNavigate();
@@ -21,6 +24,8 @@ const ChatList = () => {
   const [userId, setUserId] = useState("");
   const [opponentProfiles, setOpponentProfiles] = useState({});
   const [opponentNickName, setOpponentNickName] = useState({});
+
+  sessionStorage.setItem("userId", userId);
 
   useEffect(() => {
     axiosGetUser();
@@ -49,7 +54,7 @@ const ChatList = () => {
   //유저 아이디 가져오기
   const axiosGetUser = async () => {
     try {
-      const response = await axios.get(`${domain2}/chat/json/getUser`, {
+      const response = await axios.get(`${domain2}/chat/rest/json/getUser`, {
         withCredentials: true,
       });
       setUserId(response.data);
@@ -83,9 +88,12 @@ const ChatList = () => {
   //상대방 정보 가져오기
   const axiosGetOpponentProfile = async (opponent) => {
     try {
-      const res = await axios.post(`${domain2}/chat/json/getOpponentProfile`, {
-        opponent: opponent,
-      });
+      const res = await axios.post(
+        `${domain2}/chat/rest/json/getOpponentProfile`,
+        {
+          opponent: opponent,
+        }
+      );
       setOpponentProfiles((prevProfiles) => ({
         ...prevProfiles,
         [opponent]: res.data.profileImageName,
@@ -148,7 +156,7 @@ const ChatList = () => {
   } else {
     return (
       <div>
-        <div className="center">
+        <div className="center content-for-footer">
           <div className="contact bar">
             <h2>채팅 목록</h2>
           </div>
@@ -157,7 +165,7 @@ const ChatList = () => {
             let opponent = chatList.participants[0];
             return (
               <div
-                className="contact border"
+                className="contact"
                 key={index}
                 onClick={() =>
                   clickChat(
@@ -187,7 +195,7 @@ const ChatList = () => {
                 <div className="name">{opponentNickName[opponent]}</div>
                 <div className="message">{chatList.lastMessage.text}</div>
                 <i
-                  className="material-icons out"
+                  className="material-icons out notranslate"
                   onClick={(event) => {
                     clickOutChatRoom(event, chatList._id);
                   }}

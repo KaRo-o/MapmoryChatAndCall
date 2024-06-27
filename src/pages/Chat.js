@@ -5,14 +5,15 @@ import { io } from "socket.io-client";
 import "../css/Chat.css";
 import Footer from "../common/footer";
 
-// const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
 const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
-
-//push 할때는 domain으로 변경할것
 const domain = "https://mapmory.co.kr";
-// const domain = "http://192.168.0.45:3001";
 const domain2 = "https://mapmory.co.kr";
+// const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
+// const domain = "http://192.168.0.45:3001";
 // const domain2 = "http://192.168.0.45:8000";
+// const socket = io("https://www.uaena.shop"); // 무중단 배포서버
+// const domain = "https://www.uaena.shop";
+// const domain2 = "https://www.uaena.shop";
 
 const Chat = () => {
   const fileInputRef = useRef();
@@ -28,6 +29,7 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState({});
   const location = useLocation();
+  const chatContainerRef = useRef(null);
 
   console.log(opponentProfiles);
   console.log(imageUrl);
@@ -50,7 +52,7 @@ const Chat = () => {
     try {
       const response = await axios.get(
         // "http://192.168.0.45:8000/chat/json/getUser",
-        `${domain2}/chat/json/getUser`,
+        `${domain2}/chat/rest/json/getUser`,
         {
           withCredentials: true,
         }
@@ -70,10 +72,13 @@ const Chat = () => {
 
   useEffect(() => {
     axiosGetUser().then((res) => {
-      const user = res;
+      // const user = res;
       // console.log("getUser", res);
-      socket.emit("joinChat", { room, user });
+      socket.emit("joinChat", { room, userId });
     });
+  }, []);
+
+  useEffect(() => {
     socket.on("chat message", (msg) => {
       const user = userId;
       // console.log("chat mes", user);
@@ -90,6 +95,20 @@ const Chat = () => {
   useEffect(() => {
     getAllMessages();
   }, [room]);
+
+  //채팅 스크롤 자동으로 하단위치
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } =
+        chatContainerRef.current;
+      const isAtBottom = scrollHeight - scrollTop >= clientHeight;
+      console.log(scrollTop, scrollHeight, clientHeight, isAtBottom);
+      if (isAtBottom) {
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   // //상대방 프로필 가져오기
   // useEffect(() => {
@@ -144,12 +163,12 @@ const Chat = () => {
       if (hr < 1) {
         hr = 12;
       }
-      return "오전" + hr + ":" + min;
+      return "오전 " + hr + ":" + min;
     } else {
       if (hr > 12) {
         hr -= 12;
       }
-      return "오후" + hr + ":" + min;
+      return "오후 " + hr + ":" + min;
     }
   };
 
@@ -186,7 +205,7 @@ const Chat = () => {
       await axios
         .post(
           // "http://192.168.0.45:8000/chat/json/addChatImage",
-          `${domain2}/chat/json/addChatImage`,
+          `${domain2}/chat/rest/json/addChatImage`,
           formData,
           config
         )
@@ -271,7 +290,7 @@ const Chat = () => {
           </div>
           <div className="name">{nickname}</div>
         </div>
-        <div className="messages" id="chat">
+        <div className="messages" id="chat" ref={chatContainerRef}>
           {messages.map((res, index) => {
             const isSameSender =
               index > 0 && messages[index - 1].senderId === res.senderId;
@@ -285,7 +304,7 @@ const Chat = () => {
             return (
               <div key={index}>
                 {res.senderId === userId ? (
-                  <div className="message-container">
+                  <div className="message-container-parker">
                     {res.text !== null ? (
                       <div className="message parker">{res.text}</div>
                     ) : null}
@@ -298,7 +317,7 @@ const Chat = () => {
                     ) : null}
                     {/* 다음 메시지와 시간이 다르거나 채팅하는 사람이 다른 경우 시간을 표시 */}
                     {(!isSameSender || !isSameTimestamp) && (
-                      <div className="timestamp">
+                      <div className="timestamp parker">
                         {parseTimeStamp(res.timestamp)}
                       </div>
                     )}

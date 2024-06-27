@@ -1,7 +1,7 @@
 @charset "EUC-KR";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 .footer-container {
-  border-top: 2px solid #e6f4f1;
+  border-top: 2px solid #2780e3;
   width: 100%;
   margin: 0;
   bottom: 0;
@@ -21,13 +21,13 @@
 
 .mobile-bottom-nav {
   bottom: 0;
-  z-index: 100;
+  z-index: 10000;
   will-change: transform;
   transform: translateZ(0);
   padding: 1%;
   display: flex;
   /* box-shadow: 0 -2px 5px -2px #333; */
-  background-color: #e3f0ff;
+  background-color: #ffffff;
 }
 .mobile-bottom-nav__item {
   flex-grow: 1;
@@ -53,4 +53,5 @@
 
 .content-for-footer {
   height: 100dvh;
+  background-color: #e3f0ff;
 }

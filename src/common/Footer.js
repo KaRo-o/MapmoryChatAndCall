@@ -7,12 +7,14 @@ const Footer = () => {
 
   useEffect(() => {
     axiosGetUser();
+    setUserId(sessionStorage.getItem(userId));
   });
 
   const axiosGetUser = async () => {
     try {
       const response = await axios.get(
-        // "http://192.168.0.45:8000/chat/json/getUser",
+        // "http://192.168.0.45:8000/chat/rest/json/getUser",
+        // "https://www.uaena.shop/chat/rest/json/getUser",
         `https://mapmory.co.kr/chat/json/getUser`,
         {
           withCredentials: true,
@@ -46,7 +48,7 @@ const Footer = () => {
     <div className="mobile-bottom-nav">
       <div className="mobile-bottom-nav__item">
         <div className="mobile-bottom-nav__item-content" onClick={locationUser}>
-          <i className="material-icons">account_box</i>
+          <i className="material-icons notranslate">account_box</i>
           Profile
         </div>
       </div>
@@ -55,13 +57,13 @@ const Footer = () => {
           className="mobile-bottom-nav__item-content"
           onClick={locationTimeline}
         >
-          <i className="material-icons">library_books</i>
+          <i className="material-icons notranslate">library_books</i>
           TimeLine
         </div>
       </div>
       <div className="mobile-bottom-nav__item">
         <div className="mobile-bottom-nav__item-content">
-          <i className="material-icons">album</i>
+          <i className="material-icons notranslate">album</i>
           Record
         </div>
       </div>
@@ -70,13 +72,13 @@ const Footer = () => {
           className="mobile-bottom-nav__item-content"
           onClick={locationCommunity}
         >
-          <i className="material-icons">insert_comment</i>
+          <i className="material-icons notranslate">insert_comment</i>
           Community
         </div>
       </div>
       <div className="mobile-bottom-nav__item">
         <div className="mobile-bottom-nav__item-content" onClick={locationMenu}>
-          <i className="material-icons">list</i>
+          <i className="material-icons notranslate">list</i>
           Menu
         </div>
       </div>
