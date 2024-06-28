@@ -7,12 +7,12 @@ import { confirmAlert } from "react-confirm-alert";
 import "../css/react-confirm-alert.css";
 import Footer from "../common/footer";
 
-const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
-const domain = "http://192.168.0.45:3001";
-const domain2 = "http://192.168.0.45:8000";
-// const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
-// const domain = "https://mapmory.co.kr";
-// const domain2 = "https://mapmory.co.kr";
+// const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
+// const domain = "http://192.168.0.45:3001";
+// const domain2 = "http://192.168.0.45:8000";
+const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
+const domain = "https://mapmory.co.kr";
+const domain2 = "https://mapmory.co.kr";
 // const socket = io("https://www.uaena.shop"); // 무중단 배포서버
 // const domain = "https://www.uaena.shop";
 // const domain2 = "https://www.uaena.shop";
@@ -136,7 +136,7 @@ const ChatList = () => {
       });
       console.log("2");
 
-      // Chat list 업데이트
+      // Chat list 업데이트 혹시 안될경우 window.location.reload()
       await axiosGetChatList(userId);
 
       // 채팅방 목록 초기화 (필요한 경우)
