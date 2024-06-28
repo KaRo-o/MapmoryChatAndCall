@@ -37,6 +37,10 @@ const Footer = () => {
     window.location.href = `/timeline/getTimelineList?userId=${userId}`;
   };
 
+  const locationMap = () => {
+    window.location.href = `/map`;
+  };
+
   const locationCommunity = () => {
     window.location.href = "/community/getSharedRecordList";
   };
@@ -53,6 +57,7 @@ const Footer = () => {
           Profile
         </div>
       </div>
+
       <div className="mobile-bottom-nav__item">
         <div
           className="mobile-bottom-nav__item-content"
@@ -62,12 +67,14 @@ const Footer = () => {
           TimeLine
         </div>
       </div>
+
       <div className="mobile-bottom-nav__item">
-        <div className="mobile-bottom-nav__item-content">
-          <i className="material-icons notranslate">album</i>
-          Record
+        <div className="mobile-bottom-nav__item-content" onClick={locationMap}>
+          <i className="material-icons notranslate">map</i>
+          Map
         </div>
       </div>
+
       <div className="mobile-bottom-nav__item">
         <div
           className="mobile-bottom-nav__item-content"
@@ -77,6 +84,7 @@ const Footer = () => {
           Community
         </div>
       </div>
+
       <div className="mobile-bottom-nav__item">
         <div className="mobile-bottom-nav__item-content" onClick={locationMenu}>
           <i className="material-icons notranslate">list</i>

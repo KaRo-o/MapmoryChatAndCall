@@ -55,6 +55,10 @@ html {
 .contact .seen {
   font-size: 0.9rem;
   color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 70%;
 }
 .contact .badge {
   box-sizing: border-box;
@@ -280,6 +284,7 @@ html {
   font-size: 0.8em;
   color: #888;
   margin-bottom: 0.5rem;
+  width: fit-content;
 }
 
 .timestamp.parker {

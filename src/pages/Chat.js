@@ -5,12 +5,12 @@ import { io } from "socket.io-client";
 import "../css/Chat.css";
 import Footer from "../common/footer";
 
-const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
-const domain = "https://mapmory.co.kr";
-const domain2 = "https://mapmory.co.kr";
-// const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
-// const domain = "http://192.168.0.45:3001";
-// const domain2 = "http://192.168.0.45:8000";
+// const socket = io("https://mapmory.co.kr"); // 서버 주소 확인
+// const domain = "https://mapmory.co.kr";
+// const domain2 = "https://mapmory.co.kr";
+const socket = io("http://192.168.0.45:3001"); // 서버 주소 확인
+const domain = "http://192.168.0.45:3001";
+const domain2 = "http://192.168.0.45:8000";
 // const socket = io("https://www.uaena.shop"); // 무중단 배포서버
 // const domain = "https://www.uaena.shop";
 // const domain2 = "https://www.uaena.shop";
@@ -211,16 +211,20 @@ const Chat = () => {
         )
         .then((res) => {
           console.log(res.data);
-          res.data.forEach((imageurl) => {
-            console.log("imageUrl :", imageurl);
-            socket.emit("chat message", {
-              chatId: chat_room_id,
-              senderId: userId,
-              imageUrl: imageurl,
-              text: null,
-              readBy: [],
+          try {
+            res.data.forEach((imageurl) => {
+              console.log("imageUrl :", imageurl);
+              socket.emit("chat message", {
+                chatId: chat_room_id,
+                senderId: userId,
+                imageUrl: imageurl,
+                text: null,
+                readBy: [],
+              });
             });
-          });
+          } catch (error) {
+            window.href(res);
+          }
         });
     } catch (error) {
       console.error(error);
@@ -292,17 +296,18 @@ const Chat = () => {
         </div>
         <div className="messages" id="chat" ref={chatContainerRef}>
           {messages.map((res, index) => {
-            const isSameSender =
-              index > 0 && messages[index - 1].senderId === res.senderId;
             const nextMessage =
               index < messages.length - 1 ? messages[index + 1] : null;
-            const isSameTimestamp =
-              nextMessage &&
-              parseTimeStamp(res.timestamp) ===
+            const isLastMessage =
+              !nextMessage || nextMessage.senderId !== res.senderId;
+            const isLastMessageInTimestamp =
+              !nextMessage ||
+              parseTimeStamp(res.timestamp) !==
                 parseTimeStamp(nextMessage.timestamp);
 
             return (
               <div key={index}>
+                {console.log(index, res)}
                 {res.senderId === userId ? (
                   <div className="message-container-parker">
                     {res.text !== null ? (
@@ -316,10 +321,12 @@ const Chat = () => {
                       ></img>
                     ) : null}
                     {/* 다음 메시지와 시간이 다르거나 채팅하는 사람이 다른 경우 시간을 표시 */}
-                    {(!isSameSender || !isSameTimestamp) && (
-                      <div className="timestamp parker">
+                    {isLastMessage || isLastMessageInTimestamp ? (
+                      <div className="timestamp">
                         {parseTimeStamp(res.timestamp)}
                       </div>
+                    ) : (
+                      ""
                     )}
                   </div>
                 ) : (
@@ -335,10 +342,12 @@ const Chat = () => {
                       ></img>
                     ) : null}
                     {/* 다음 메시지와 시간이 다르거나 채팅하는 사람이 다른 경우 시간을 표시 */}
-                    {(!isSameSender || !isSameTimestamp) && (
+                    {isLastMessage || isLastMessageInTimestamp ? (
                       <div className="timestamp">
                         {parseTimeStamp(res.timestamp)}
                       </div>
+                    ) : (
+                      ""
                     )}
                   </div>
                 )}
