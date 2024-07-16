@@ -30,11 +30,13 @@ const Footer = () => {
   // };
 
   const locationUser = () => {
-    window.location.href = `/user/getProfile?userId=${userId}`;
+    // window.location.href = `/user/getProfile?userId=${userId}`;
+    window.location.href = `/user/getProfile`;
   };
 
   const locationTimeline = () => {
-    window.location.href = `/timeline/getTimelineList?userId=${userId}`;
+    // window.location.href = `/timeline/getTimelineList?userId=${userId}`;
+    window.location.href = `/timeline/getTimelineList`;
   };
 
   const locationMap = () => {

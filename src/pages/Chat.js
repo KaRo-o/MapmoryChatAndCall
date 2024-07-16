@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import "../css/Chat.css";
 import Footer from "../common/footer";
@@ -23,6 +23,7 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const room = chat_room_id;
   const [imageList, setImageList] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [opponentProfiles, setOpponentProfiles] = useState("");
   const [opponentNickName, setOpponentNickName] = useState("");
   const [opponent, setOpponent] = useState("");
@@ -181,7 +182,24 @@ const Chat = () => {
 
   //이미지 인풋시 리스트에 추가
   const onChangeImageInput = (e) => {
-    setImageList([...imageList, ...e.target.files]);
+    // setImageList([...imageList, ...e.target.files]);
+    const files = Array.from(e.target.files);
+    setImageList([...imageList, ...files]);
+
+    const previews = files.map((file) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      return new Promise((resolve) => {
+        reader.onload = () => resolve(reader.result);
+      });
+    });
+
+    Promise.all(previews).then((previews) => {
+      setImagePreviews([...imagePreviews, ...previews]);
+    });
+
+    //초기화 해주지 않으면 이전과 같은 이미지 추가행위를 하였을때 이미지가 추가되지 않음
+    e.target.value = "";
   };
 
   //이미지 업로드
@@ -225,6 +243,8 @@ const Chat = () => {
           } catch (error) {
             window.href(res);
           }
+          setImagePreviews([]);
+          setImageList([]);
         });
     } catch (error) {
       console.error(error);
@@ -250,6 +270,12 @@ const Chat = () => {
   const onClickSend = () => {
     axiosImageUpload();
     sendMessage();
+  };
+
+  const removeImage = (index) => {
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
+    setImageList(imageList.filter((_, i) => i !== index));
+    console.log(imageList);
   };
 
   // //상대방 사진, 닉네임 가져오기
@@ -307,7 +333,7 @@ const Chat = () => {
 
             return (
               <div key={index}>
-                {console.log(index, res)}
+                {/* {console.log(index, res)} */}
                 {res.senderId === userId ? (
                   <div className="message-container-parker">
                     {res.text !== null ? (
@@ -355,10 +381,32 @@ const Chat = () => {
             );
           })}
         </div>
-        <div className="input">
-          {/* 이미지 미리보기 화면 만들곳 */}
+        {/* 이미지 미리보기 화면 만들곳 */}
+        {imagePreviews[0] !== undefined ? (
+          <div className="image-preview-container">
+            {imagePreviews.map((preview, index) => (
+              <div key={index} className="image-preview-wrapper">
+                <img
+                  key={index}
+                  src={preview}
+                  alt={`preview-${index}`}
+                  className="image-preview"
+                />
+                <button
+                  className="remove-image-button"
+                  onClick={() => removeImage(index)}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          ""
+        )}
 
-          {/* 이미지 미리보기 화면 만들곳 */}
+        {/* 이미지 미리보기 화면 만들곳 */}
+        <div className="input">
           <i className="material-icons" onClick={inputImageClick}>
             add_photo_alternate
           </i>

@@ -26,6 +26,7 @@ const ChatList = () => {
   const [opponentNickName, setOpponentNickName] = useState({});
 
   // sessionStorage.setItem("userId", userId);
+  console.log("list", list[0]);
 
   useEffect(() => {
     axiosGetUser();
@@ -150,6 +151,22 @@ const ChatList = () => {
     return (
       <div className="content-for-footer">
         <div>Loading...</div>
+      </div>
+    );
+  } else if (list[0] === undefined) {
+    return (
+      <div>
+        <div className="center content-for-footer">
+          <div className="contact bar">
+            <h3>Chatting</h3>
+          </div>
+          <div className="noList">현재 채팅방이 존재하지 않아요!</div>
+          <div className="noList">대화하고 싶은 사람의 프로필에서</div>
+          <div className="noList">채팅을 시작해 보세요!</div>
+        </div>
+        <div className="footer-container chat-list">
+          <Footer />
+        </div>
       </div>
     );
   } else {

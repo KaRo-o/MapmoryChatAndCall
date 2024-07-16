@@ -351,3 +351,54 @@ html {
 .react-confirm-alert-body {
   width: 200px;
 }
+
+.noList {
+  text-align: center;
+  top: 3em;
+}
+
+/* 이미지 미리보기 화면 */
+.image-preview-container {
+  height: 9em;
+  display: flex;
+  flex: auto;
+  width: 100%;
+  position: relative;
+  margin-top: 0.3em;
+  right: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* border: 1px solid red; */
+}
+
+.image-preview {
+  border: 1px solid black;
+  margin: 4px;
+  opacity: 1;
+  height: 6em;
+  width: 6em;
+  border-radius: 25px;
+  object-fit: cover;
+}
+
+.image-preview-wrapper {
+  margin: 4px;
+  display: inline-block;
+  position: relative;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: 1px;
+  background-color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  line-height: 21px;
+  border: 2px solid black;
+  font-weight: 800;
+  padding: 0;
+  margin: 0;
+  right: -3px;
+}
